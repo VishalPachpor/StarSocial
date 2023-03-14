@@ -34,11 +34,13 @@ function Navbar() {
     <div>
       <nav id='nav'>
         <div className='container flex'>
-          <h2> Socialstar ✨</h2>
+          <NavLink to='/' style={{textDecoration:"none"}}>
+          <h2 style={{ color:"white"}}> Socialstar ✨</h2>
+          </NavLink>
           {/* <img src={logo} alt="img" /> */}
           <div className='links'>
             <NavLink to='/'><a href=" "><HomeIcon /></a></NavLink>
-            <NavLink to='/searched'><a href=" "><SearchOutlinedIcon /></a></NavLink>
+            <NavLink to='/Search'><a href=" "><SearchOutlinedIcon /></a></NavLink>
             {/* <NavLink to='/login'><a href=" ">Login</a></NavLink> */}
             <NavLink to='/profile'><a href=" "><PersonOutlineOutlinedIcon /></a></NavLink>
 

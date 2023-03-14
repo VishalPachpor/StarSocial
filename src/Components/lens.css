@@ -8,7 +8,7 @@
 
 }
 .feeds{
-    display: block;
+    /* display: block; */
     position: relative;
     text-align: justify;
     width: 70%;
@@ -36,6 +36,7 @@
 }
 .comment{
     width: 15%;
+    display: inline;
 
 }
 
