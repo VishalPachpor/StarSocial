@@ -72,7 +72,7 @@ const Search = () => {
       <div className="serBtn">
       <button  onClick={handleSearchClick}>Search</button>
       </div>
-      <div>
+      <div className="searchData">
         {searchedData &&
           searchedData.map((singleFeed, index) => {
             return (

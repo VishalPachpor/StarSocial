@@ -3,14 +3,6 @@ import { makeCalls } from "../api/api";
 import { filterApiResponse } from "../api/utils/helper";
 import "./lens.css"
 
-/**
- * This would take care of all the farcaster things for any user. Any user could be vitalik.eth, pubKey etc
- * Any user post and comments with direct urls would be there.
- * It only shows 20 post either comment or actual post
- *
- * For vishal:
- * Style this or copy these code and make it home page
- */
 
 function LensFeed() {
     const [farcasterFeed, setFarcasterFeed] = useState([]);
