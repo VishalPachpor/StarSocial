@@ -83,10 +83,7 @@ function FarcasterFeed() {
 
                                         {singleFed.actions && singleFed.actions[0].related_urls[0]}
                                     </a>
-                                    {/* <div className="reply">
-                                        <input type="text" placeholder="Reply" id="comment" />
-                                        <button onClick={replyChange} className="btn" id="btn">reply</button>
-                                    </div> */}
+                                    
                                 </div>
 
                                 <div className="time">
