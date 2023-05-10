@@ -1,6 +1,7 @@
+/* .feed styles */
 .feed {
     flex: 0.4;
-    border-right: 1px solid var(--twitter-background);
+    border-right: 1px solid; /* Replace with your desired color or variable */
     min-width: 100vw;
     position: relative;
     top: 20px;
@@ -9,21 +10,21 @@
     justify-content: center;
 }
 
-
+/* .feed__header styles */
 .feed__header {
     position: relative;
-    top: 10;
+    top: 10px; /* Add 'px' here */
     background-color: white;
     z-index: 100;
-    border: 1px solid var(--twitter-background);
+    border: 1px solid; /* Replace with your desired color or variable */
 }
 
 .feed__header > h2 {
     font-size: 20px;
     font-weight: 800;
-
 }
 
-.home{
+/* .home styles */
+.home {
     height: auto;
 }
