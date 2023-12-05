@@ -1,83 +1,106 @@
-import { getUrl, makeCalls } from "../api/api";
-import { filterApiResponse } from "../api/utils/helper";
-import SearchFeed from "./SearchResult";
 import { useState } from "react";
-import "./Searched.css"
+import { makeCallToGraph } from "../api/graphCalls";
+import SearchNextResult from "./ResultSearch";
+import { makeCalls } from "../api/api";
+import { filterApiResponse } from "../api/utils/helper";
+import "./Search.css";
 
-function SearchFeat() {
-    const [searchData, setSearchData] = useState({
-        platform: "",
-        pubAddress: "",
-    });
-    const [searchFeed, setSearchFeed] = useState([]);
-    const [authorUrii, setAuthorURI] = useState("");
-    const [authorData, setAuthorData] = useState({});
-    async function handleClickForSearch(e) {
-        e.preventDefault();
-        console.log(searchData);
-        const url = getUrl(
-            "0",
-            searchData.platform.toLowerCase(),
-            searchData.pubAddress
-        );
-        const url2 = getUrl("1", "", searchData.pubAddress);
-        const response = await makeCalls(url, "GET");
-        const response2 = await makeCalls(url2, "GET");
-        const profileImg = filterApiResponse(response2);
-        setAuthorData(profileImg[0]);
-        setAuthorURI(profileImg[0].profile_uri[0]);
-        setSearchFeed(response);
-        setSearchData({
-            platform: "",
-            pubAddress: "",
-        });
+const Search = () => {
+  const [authorUrii, setAuthorURI] = useState("");
+  const [authorData, setAuthorData] = useState({});
+  const [searchedData, setSearchedData] = useState([]);
+  const operationName = "findOneIdentity";
+  const [searchInput, setSearchInput] = useState({
+    platform: "",
+    identity: "",
+  });
+
+  const filterResponse = (item) => {
+    // Filter for Ethereum addresses
+    if (
+      (item.from.platform === "ethereum" || item.to.platform === "ethereum") &&
+      item.from.identity.length === 42
+    ) {
+      return item;
     }
-    return (
-        <div className="Searched">
+  };
 
-            <input
-                // style={{width:"40vw",position:"relative" ,left:"200px"}}
-                className="searchInput"
-                type="text"
-                value={searchData.pubAddress}
-                placeholder="Type Your Address"
-                onChange={(e) =>
-                    setSearchData({ ...searchData, pubAddress: e.target.value })
-                }
+  const makeRss3Calls = async (address) => {
+    const url = `https://api.rss3.io/v1/notes/${address}?limit=30&tag=social&include_poap=false&count_only=false&query_status=false`;
+    const url2 = `https://api.rss3.io/v1/profiles/${address}`;
+    const data = await makeCalls(url, "GET");
+    const authorUri = await makeCalls(url2, "GET");
+    const img = filterApiResponse(authorUri);
+    setAuthorData(img[0]);
+    setAuthorURI(img[0].profile_uri[0]);
+    setSearchedData(data);
+  };
+
+  const handleResponseAndState = (respData) => {
+    const filteredData = respData.filter(filterResponse);
+    console.log(filteredData);
+    const ethPubAddress = filteredData[0]?.from.identity;
+    return ethPubAddress;
+  };
+
+  const handleSearchClick = async () => {
+    console.log(searchInput);
+    const resp = await makeCallToGraph(operationName, searchInput);
+    const address = handleResponseAndState(resp);
+    await makeRss3Calls(address);
+    setSearchInput({
+      platform: "",
+      identity: "",
+    });
+  };
+
+  return (
+    <div className="bigDiv">
+      <h3 className="serText">
+        Now You can Search Next ID Binded Identity Easily
+      </h3>
+
+      {/* Platform Input */}
+      <input
+        type="text"
+        className="inputSer"
+        placeholder="Enter Platform"
+        value={searchInput.platform}
+        onChange={(e) =>
+          setSearchInput({ ...searchInput, platform: e.target.value })
+        }
+      />
+
+      {/* Identity Input */}
+      <input
+        type="text"
+        className="inputSer"
+        placeholder="Enter Identity"
+        value={searchInput.identity}
+        onChange={(e) =>
+          setSearchInput({ ...searchInput, identity: e.target.value })
+        }
+      />
+
+      {/* Search Button */}
+      <div className="serBtn">
+        <button onClick={handleSearchClick}>Search</button>
+      </div>
+
+      {/* Display Search Results */}
+      <div className="searchData">
+        {searchedData &&
+          searchedData.map((singleFeed, index) => (
+            <SearchNextResult
+              key={index}
+              singleSearchFeed={singleFeed}
+              authorData={authorData}
+              authorUrii={authorUrii}
             />
+          ))}
+      </div>
+    </div>
+  );
+};
 
-            <select
-                className="selectMedia"
-                value={searchData.platform}
-                onChange={(e) => {
-                    setSearchData({ ...searchData, platform: e.target.value });
-                }}
-            >
-                <option>Farcaster</option>
-                <option>Lens</option>
-                <option>Lenster</option>
-                <option>Orb</option>
-                <option>Crossbell</option>
-                <option>xLog</option>
-                <option>EIP-1577</option>
-                <option>IQ.Wiki</option>
-            </select>
-            <button className="searchButton" onClick={handleClickForSearch}>Search</button>
-            {searchFeed.length > 0 ? (
-                searchFeed.map((singleFeed) => {
-                    return (
-                        <SearchFeed
-                            singleSearchFeed={singleFeed}
-                            authorData={authorData}
-                            authorUrii={authorUrii}
-                        />
-                    );
-                })
-            ) : (
-                <p style={{ display: "none", textAlign: "centre", color: "white", margin: "auto", }}>Sorry Information you searched couldn't found</p>
-            )}
-
-        </div>
-    );
-}
-export default SearchFeat;
+export default Search;
